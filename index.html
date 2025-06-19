@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>UTHM FKAAB  Toilet and Classroom</title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/Fkaabarea_2.js"></script>
+        <script src="data/Fkaab_3.js"></script>
+        <script src="data/MaleToilet_4.js"></script>
+        <script src="data/FemaleToilet_5.js"></script>
+        <script src="data/BilikSeminar_6.js"></script>
+        <script src="data/BilikTutorial_7.js"></script>
+        <script src="data/BilikKuliah_8.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[1.8621380450328135,103.08320508891443],[1.8636768016407226,103.08474871073115]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var title = new L.Control({'position':'topright'});
+        title.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+        };
+        title.update = function () {
+            this._div.innerHTML = '<h2>UTHM FKAAB  Toilet and Classroom</h2>';
+        };
+        title.addTo(map);
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_OpenStreetMap_0');
+        map.getPane('pane_OpenStreetMap_0').style.zIndex = 400;
+        var layer_OpenStreetMap_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OpenStreetMap_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OpenStreetMap_0;
+        map.addLayer(layer_OpenStreetMap_0);
+        map.createPane('pane_GoogleSatellite_1');
+        map.getPane('pane_GoogleSatellite_1').style.zIndex = 401;
+        var layer_GoogleSatellite_1 = L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_GoogleSatellite_1;
+        map.addLayer(layer_GoogleSatellite_1);
+        function pop_Fkaabarea_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Name'] !== null ? autolinker.link(String(feature.properties['Name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Fkaabarea_2_0() {
+            return {
+                pane: 'pane_Fkaabarea_2',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,254,76,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Fkaabarea_2');
+        map.getPane('pane_Fkaabarea_2').style.zIndex = 402;
+        map.getPane('pane_Fkaabarea_2').style['mix-blend-mode'] = 'normal';
+        var layer_Fkaabarea_2 = new L.geoJson(json_Fkaabarea_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Fkaabarea_2',
+            layerName: 'layer_Fkaabarea_2',
+            pane: 'pane_Fkaabarea_2',
+            onEachFeature: pop_Fkaabarea_2,
+            style: style_Fkaabarea_2_0,
+        });
+        bounds_group.addLayer(layer_Fkaabarea_2);
+        map.addLayer(layer_Fkaabarea_2);
+        function pop_Fkaab_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Name'] !== null ? autolinker.link(String(feature.properties['Name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Fkaab_3_0() {
+            return {
+                pane: 'pane_Fkaab_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,127,0,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Fkaab_3');
+        map.getPane('pane_Fkaab_3').style.zIndex = 403;
+        map.getPane('pane_Fkaab_3').style['mix-blend-mode'] = 'normal';
+        var layer_Fkaab_3 = new L.geoJson(json_Fkaab_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Fkaab_3',
+            layerName: 'layer_Fkaab_3',
+            pane: 'pane_Fkaab_3',
+            onEachFeature: pop_Fkaab_3,
+            style: style_Fkaab_3_0,
+        });
+        bounds_group.addLayer(layer_Fkaab_3);
+        map.addLayer(layer_Fkaab_3);
+        function pop_MaleToilet_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Name</th>\
+                        <td class="visible-with-data" id="Name">' + (feature.properties['Name'] !== null ? autolinker.link(String(feature.properties['Name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Number of Toilet Bowl</th>\
+                        <td class="visible-with-data" id="Number of Toilet Bowl">' + (feature.properties['Number of Toilet Bowl'] !== null ? autolinker.link(String(feature.properties['Number of Toilet Bowl']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Number of Urinal</th>\
+                        <td class="visible-with-data" id="Number of Urinal">' + (feature.properties['Number of Urinal'] !== null ? autolinker.link(String(feature.properties['Number of Urinal']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Number of Basin</th>\
+                        <td class="visible-with-data" id="Number of Basin">' + (feature.properties['Number of Basin'] !== null ? autolinker.link(String(feature.properties['Number of Basin']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Code</th>\
+                        <td class="visible-with-data" id="Code">' + (feature.properties['Code'] !== null ? autolinker.link(String(feature.properties['Code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_MaleToilet_4_0() {
+            return {
+                pane: 'pane_MaleToilet_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(91,172,255,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_MaleToilet_4');
+        map.getPane('pane_MaleToilet_4').style.zIndex = 404;
+        map.getPane('pane_MaleToilet_4').style['mix-blend-mode'] = 'normal';
+        var layer_MaleToilet_4 = new L.geoJson(json_MaleToilet_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_MaleToilet_4',
+            layerName: 'layer_MaleToilet_4',
+            pane: 'pane_MaleToilet_4',
+            onEachFeature: pop_MaleToilet_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_MaleToilet_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_MaleToilet_4);
+        map.addLayer(layer_MaleToilet_4);
+        function pop_FemaleToilet_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Name</th>\
+                        <td class="visible-with-data" id="Name">' + (feature.properties['Name'] !== null ? autolinker.link(String(feature.properties['Name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Number of Toilet Bowl </th>\
+                        <td class="visible-with-data" id="Number of Toilet Bowl ">' + (feature.properties['Number of Toilet Bowl '] !== null ? autolinker.link(String(feature.properties['Number of Toilet Bowl ']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Number of Basin</th>\
+                        <td class="visible-with-data" id="Number of Basin">' + (feature.properties['Number of Basin'] !== null ? autolinker.link(String(feature.properties['Number of Basin']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Code</th>\
+                        <td class="visible-with-data" id="Code">' + (feature.properties['Code'] !== null ? autolinker.link(String(feature.properties['Code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_FemaleToilet_5_0() {
+            return {
+                pane: 'pane_FemaleToilet_5',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,115,243,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_FemaleToilet_5');
+        map.getPane('pane_FemaleToilet_5').style.zIndex = 405;
+        map.getPane('pane_FemaleToilet_5').style['mix-blend-mode'] = 'normal';
+        var layer_FemaleToilet_5 = new L.geoJson(json_FemaleToilet_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FemaleToilet_5',
+            layerName: 'layer_FemaleToilet_5',
+            pane: 'pane_FemaleToilet_5',
+            onEachFeature: pop_FemaleToilet_5,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_FemaleToilet_5_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FemaleToilet_5);
+        map.addLayer(layer_FemaleToilet_5);
+        function pop_BilikSeminar_6(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Name</th>\
+                        <td>' + (feature.properties['Name'] !== null ? autolinker.link(String(feature.properties['Name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Capacity</strong><br />' + (feature.properties['Capacity'] !== null ? autolinker.link(String(feature.properties['Capacity']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Projection Screen</strong><br />' + (feature.properties['Projection Screen'] !== null ? autolinker.link(String(feature.properties['Projection Screen']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Projector</strong><br />' + (feature.properties['Projector'] !== null ? autolinker.link(String(feature.properties['Projector']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Speaker</strong><br />' + (feature.properties['Speaker'] !== null ? autolinker.link(String(feature.properties['Speaker']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Whiteboard</strong><br />' + (feature.properties['Whiteboard'] !== null ? autolinker.link(String(feature.properties['Whiteboard']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Code</strong><br />' + (feature.properties['Code'] !== null ? autolinker.link(String(feature.properties['Code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_BilikSeminar_6_0() {
+            return {
+                pane: 'pane_BilikSeminar_6',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(31,120,180,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BilikSeminar_6');
+        map.getPane('pane_BilikSeminar_6').style.zIndex = 406;
+        map.getPane('pane_BilikSeminar_6').style['mix-blend-mode'] = 'normal';
+        var layer_BilikSeminar_6 = new L.geoJson(json_BilikSeminar_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BilikSeminar_6',
+            layerName: 'layer_BilikSeminar_6',
+            pane: 'pane_BilikSeminar_6',
+            onEachFeature: pop_BilikSeminar_6,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_BilikSeminar_6_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_BilikSeminar_6);
+        map.addLayer(layer_BilikSeminar_6);
+        function pop_BilikTutorial_7(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Name</th>\
+                        <td class="visible-with-data" id="Name">' + (feature.properties['Name'] !== null ? autolinker.link(String(feature.properties['Name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Projection Screen</th>\
+                        <td class="visible-with-data" id="Projection Screen">' + (feature.properties['Projection Screen'] !== null ? autolinker.link(String(feature.properties['Projection Screen']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Projector</th>\
+                        <td class="visible-with-data" id="Projector">' + (feature.properties['Projector'] !== null ? autolinker.link(String(feature.properties['Projector']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Speaker</th>\
+                        <td class="visible-with-data" id="Speaker">' + (feature.properties['Speaker'] !== null ? autolinker.link(String(feature.properties['Speaker']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Capacity</th>\
+                        <td class="visible-with-data" id="Capacity">' + (feature.properties['Capacity'] !== null ? autolinker.link(String(feature.properties['Capacity']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Whiteboard</th>\
+                        <td class="visible-with-data" id="Whiteboard">' + (feature.properties['Whiteboard'] !== null ? autolinker.link(String(feature.properties['Whiteboard']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Code </th>\
+                        <td class="visible-with-data" id="Code ">' + (feature.properties['Code '] !== null ? autolinker.link(String(feature.properties['Code ']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_BilikTutorial_7_0() {
+            return {
+                pane: 'pane_BilikTutorial_7',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,50,50,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BilikTutorial_7');
+        map.getPane('pane_BilikTutorial_7').style.zIndex = 407;
+        map.getPane('pane_BilikTutorial_7').style['mix-blend-mode'] = 'normal';
+        var layer_BilikTutorial_7 = new L.geoJson(json_BilikTutorial_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BilikTutorial_7',
+            layerName: 'layer_BilikTutorial_7',
+            pane: 'pane_BilikTutorial_7',
+            onEachFeature: pop_BilikTutorial_7,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_BilikTutorial_7_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_BilikTutorial_7);
+        map.addLayer(layer_BilikTutorial_7);
+        function pop_BilikKuliah_8(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Name</th>\
+                        <td class="visible-with-data" id="Name">' + (feature.properties['Name'] !== null ? autolinker.link(String(feature.properties['Name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Capacity</th>\
+                        <td class="visible-with-data" id="Capacity">' + (feature.properties['Capacity'] !== null ? autolinker.link(String(feature.properties['Capacity']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Projection Screen</th>\
+                        <td class="visible-with-data" id="Projection Screen">' + (feature.properties['Projection Screen'] !== null ? autolinker.link(String(feature.properties['Projection Screen']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Projector</th>\
+                        <td class="visible-with-data" id="Projector">' + (feature.properties['Projector'] !== null ? autolinker.link(String(feature.properties['Projector']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Speaker</th>\
+                        <td class="visible-with-data" id="Speaker">' + (feature.properties['Speaker'] !== null ? autolinker.link(String(feature.properties['Speaker']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Whiteboard </th>\
+                        <td class="visible-with-data" id="Whiteboard ">' + (feature.properties['Whiteboard '] !== null ? autolinker.link(String(feature.properties['Whiteboard ']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Code</th>\
+                        <td class="visible-with-data" id="Code">' + (feature.properties['Code'] !== null ? autolinker.link(String(feature.properties['Code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_BilikKuliah_8_0() {
+            return {
+                pane: 'pane_BilikKuliah_8',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BilikKuliah_8');
+        map.getPane('pane_BilikKuliah_8').style.zIndex = 408;
+        map.getPane('pane_BilikKuliah_8').style['mix-blend-mode'] = 'normal';
+        var layer_BilikKuliah_8 = new L.geoJson(json_BilikKuliah_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BilikKuliah_8',
+            layerName: 'layer_BilikKuliah_8',
+            pane: 'pane_BilikKuliah_8',
+            onEachFeature: pop_BilikKuliah_8,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_BilikKuliah_8_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_BilikKuliah_8);
+        map.addLayer(layer_BilikKuliah_8);
+        var overlaysTree = [
+            {label: '<img src="legend/BilikKuliah_8.png" /> Bilik Kuliah', layer: layer_BilikKuliah_8},
+            {label: '<img src="legend/BilikTutorial_7.png" /> Bilik Tutorial', layer: layer_BilikTutorial_7},
+            {label: '<img src="legend/BilikSeminar_6.png" /> Bilik Seminar', layer: layer_BilikSeminar_6},
+            {label: '<img src="legend/FemaleToilet_5.png" /> Female Toilet', layer: layer_FemaleToilet_5},
+            {label: '<img src="legend/MaleToilet_4.png" /> Male Toilet', layer: layer_MaleToilet_4},
+            {label: '<img src="legend/Fkaab_3.png" /> Fkaab', layer: layer_Fkaab_3},
+            {label: '<img src="legend/Fkaabarea_2.png" /> Fkaab area', layer: layer_Fkaabarea_2},
+            {label: "Google Satellite", layer: layer_GoogleSatellite_1},
+            {label: "OpenStreetMap", layer: layer_OpenStreetMap_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: true,
+        });
+        lay.addTo(map);
+        setBounds();
+        var i = 0;
+        layer_Fkaabarea_2.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Name'] !== null?String('<div style="color: #323232; font-size: 12pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Fkaabarea_2'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_Fkaab_3.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Name'] !== null?String('<div style="color: #323232; font-size: 12pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Fkaab_3'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_MaleToilet_4.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Name'] !== null?String('<div style="color: #323232; font-size: 12pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_MaleToilet_4'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_FemaleToilet_5.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Name'] !== null?String('<div style="color: #323232; font-size: 12pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_FemaleToilet_5'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_BilikSeminar_6.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Name'] !== null?String('<div style="color: #323232; font-size: 12pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_BilikSeminar_6'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_BilikTutorial_7.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Name'] !== null?String('<div style="color: #323232; font-size: 12pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_BilikTutorial_7'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_BilikKuliah_8.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Name'] !== null?String('<div style="color: #323232; font-size: 12pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Name']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_BilikKuliah_8'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_Fkaabarea_2,layer_Fkaab_3,layer_MaleToilet_4,layer_FemaleToilet_5,layer_BilikSeminar_6,layer_BilikTutorial_7,layer_BilikKuliah_8]);
+        map.on("zoomend", function(){
+            resetLabels([layer_Fkaabarea_2,layer_Fkaab_3,layer_MaleToilet_4,layer_FemaleToilet_5,layer_BilikSeminar_6,layer_BilikTutorial_7,layer_BilikKuliah_8]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_Fkaabarea_2,layer_Fkaab_3,layer_MaleToilet_4,layer_FemaleToilet_5,layer_BilikSeminar_6,layer_BilikTutorial_7,layer_BilikKuliah_8]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_Fkaabarea_2,layer_Fkaab_3,layer_MaleToilet_4,layer_FemaleToilet_5,layer_BilikSeminar_6,layer_BilikTutorial_7,layer_BilikKuliah_8]);
+        });
+        </script>
+    </body>
+</html>
